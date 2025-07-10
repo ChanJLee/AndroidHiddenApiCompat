@@ -45,7 +45,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(group.toString(), "fibonacci", version.toString())
+    coordinates("me.chan.lib", "hiddenapi", "1.0.0")
 
     pom {
         name = "hiddenapi"
