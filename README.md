@@ -4,12 +4,6 @@ Starting from Android 9 (API level 28), the platform enforces restrictions on no
 These measures were implemented to enhance stability by reducing unexpected crashes and minimizing emergency updates for developers.  
 For more details, see Google's official documentation: [Improving Stability by Reducing Usage of non-SDK Interfaces](https://developer.android.com/about/versions/pie/restrictions-non-sdk-interfaces).
 
-## Key Features
-- **Zero Code Modification** - Works with existing codebase without any changes
-- **Automatic Exemption Handling** - Transparently manages hidden API access restrictions
-- **Lightweight Integration** - Single initialization call for seamless operation
-- **Cross-Version Support** - Compatible with Android 9+ (API 28 and higher)
-
 ```kotlin
 try { 
     val clazz = Class.forName("dalvik.system.VMRuntime")
@@ -19,6 +13,12 @@ try {
     Toast.makeText(context, "API access failed: ${e.message}", Toast.LENGTH_SHORT).show()
 }
 ```
+
+## Key Features
+- **Zero Code Modification** - Works with existing codebase without any changes
+- **Automatic Exemption Handling** - Transparently manages hidden API access restrictions
+- **Lightweight Integration** - Single initialization call for seamless operation
+- **Cross-Version Support** - Compatible with Android 9+ (API 28 and higher)
 
 ## Installation
 
