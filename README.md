@@ -1,25 +1,58 @@
-Starting from Android 9 (API level 28), the platform restricts the usage of non-SDK interfaces. These restrictions apply whenever an app references a non-SDK interface or tries to access it via reflection or JNI.  
-These measures were introduced to enhance user and developer experience by reducing app crashes and minimizing emergency rollouts for developers.  
-For more details, see Improving Stability by Reducing Usage of non-SDK Interfaces.
+# Android Hidden API Compatibility Library
 
-This library is **not** intended to replace existing libraries like [android-hidden-api](https://github.com/anggrayudi/android-hidden-api).  
-It can be used immediately without any modifications to your existing code to access hidden APIs.
+Starting from Android 9 (API level 28), the platform enforces restrictions on non-SDK interface usage. These restrictions apply when apps attempt to access non-SDK interfaces through reflection or JNI.  
+These measures were implemented to enhance stability by reducing unexpected crashes and minimizing emergency updates for developers.  
+For more details, see Google's official documentation: [Improving Stability by Reducing Usage of non-SDK Interfaces](https://developer.android.com/about/versions/pie/restrictions-non-sdk-interfaces).
+
+## Key Features
+- **Zero Code Modification** - Works with existing codebase without any changes
+- **Automatic Exemption Handling** - Transparently manages hidden API access restrictions
+- **Lightweight Integration** - Single initialization call for seamless operation
+- **Cross-Version Support** - Compatible with Android 9+ (API 28 and higher)
 
 ```kotlin
 try { 
-     val clazz = Class.forName("dalvik.system.VMRuntime")
-     val method = clazz.getDeclaredMethod("setHiddenApiExemptions", Array<String>::class.java)
-     Toast.makeText(context, "Invoke succeeded: $method", Toast.LENGTH_SHORT).show()
- } catch (e: Throwable) {
-     Toast.makeText(context, "Invoke failed: ${e.message}", Toast.LENGTH_SHORT).show()
- }
+    val clazz = Class.forName("dalvik.system.VMRuntime")
+    val method = clazz.getDeclaredMethod("setHiddenApiExemptions", Array<String>::class.java)
+    Toast.makeText(context, "API access succeeded: $method", Toast.LENGTH_SHORT).show()
+} catch (e: Throwable) {
+    Toast.makeText(context, "API access failed: ${e.message}", Toast.LENGTH_SHORT).show()
+}
 ```
 
-The key advantage of this library is its minimal invasiveness — you don't need to change any existing code to support higher Android versions.
-All you need to do is call:
+## Installation
+
+Add dependency in your app's build.gradle:
+
+```groovy
+dependencies {
+    implementation 'io.github.chanjlee:hiddenapi:1.0.0'
+}
+```
+
+## Usage
+
+Initialize once in your Application class:
 
 ```kotlin
-HiddenApiCompat.compat(context)
+class MyApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        HiddenApiCompat.enable(this)
+    }
+}
 ```
 
-when necessary, and the library will handle the rest seamlessly.
+## How It Works
+
+The library implements the following mechanisms:
+
+- Automatic Signature Bypass - Utilizes Android's hidden API exemption protocol
+- Reflection Optimization - Smart handling of reflection requirements
+- Runtime Safety - Maintains original app behavior while enabling privileged access
+
+## Compatibility Matrix
+
+| Android Version | API Level | Support Status | 
+|-----------------|-----------|-----------------| 
+| Android 9 | 28 | ✔️ Full | | Android 10 | 29 | ✔️ Full | | Android 11+ | 30+ | ✔️ Full |
