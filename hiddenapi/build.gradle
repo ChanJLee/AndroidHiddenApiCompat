@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.vanniktech.maven.publish'
 
 android {
     compileSdkVersion 34
@@ -37,24 +38,38 @@ android {
     namespace 'me.chan.lib.hiddenapi'
 }
 
-apply plugin: 'maven-publish'
+// <module directory>/build.gradle.kts
+import com.vanniktech.maven.publish.SonatypeHost
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
 
-task androidSourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from android.sourceSets.main.java.srcDirs
-}
+    signAllPublications()
 
-project.afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                groupId = 'me.chan.lib'
-                artifactId = 'hiddenapi'
-                version = '1.0.0'
+    coordinates(group.toString(), "fibonacci", version.toString())
 
-                artifact bundleReleaseAar
-                artifact androidSourcesJar
+    pom {
+        name = "hiddenapi"
+        description = "invoke hidden api compat"
+        inceptionYear = "2025"
+        url = "https://github.com/ChanJLee/AndroidHiddenApiCompat"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
             }
+        }
+        developers {
+            developer {
+                id = "kotlin-hands-on"
+                name = "Kotlin Developer Advocate"
+                url = "ChanJLee/AndroidHiddenApiCompat"
+            }
+        }
+        scm {
+            url = "https://github.com/ChanJLee/AndroidHiddenApiCompat"
+            connection = "scm:git:git://github.com/ChanJLee/AndroidHiddenApiCompat.git"
+            developerConnection = "scm:git:ssh://git@github.com/ChanJLee/AndroidHiddenApiCompat.git"
         }
     }
 }
