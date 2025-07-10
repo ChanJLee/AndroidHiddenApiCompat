@@ -38,7 +38,7 @@ Initialize once in your Application class:
 class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        HiddenApiCompat.enable(this)
+        HiddenApiCompat.compat(this)
     }
 }
 ```
