@@ -11,21 +11,21 @@ import java.lang.reflect.Method;
 public class HiddenApiCompat {
 	private static boolean sSoLoaded = false;
 
-	public static boolean fix(Context context) {
-		// 28 以下下不操作
+	public static boolean compat(Context context) {
+		// Do nothing below API 28
 		if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
 			return true;
 		}
 
-		i("sdk : " + Build.VERSION.SDK_INT + " preview sdk: " + Build.VERSION.PREVIEW_SDK_INT);
+		i("SDK: " + Build.VERSION.SDK_INT + ", Preview SDK: " + Build.VERSION.PREVIEW_SDK_INT);
 
-		// so 加载错误考虑使用java代码修复，此方法不能再所有机器上奏效
-		boolean rtn = fixBySetVmRuntime(context);
-		i("try to fix by set vm runtime: " + rtn);
+		// If loading so fails, consider fixing by Java code; this method may not work on all devices
+		boolean rtn = compat0(context);
+		i("Attempt to fix by setting VM runtime: " + rtn);
 		return rtn;
 	}
 
-	private static boolean loadIfSo(Context context) {
+	private static boolean loadLibrary(Context context) {
 		if (sSoLoaded) {
 			return true;
 		}
@@ -38,30 +38,30 @@ public class HiddenApiCompat {
 	}
 
 	/**
-	 * 设置高版本target sdk后，设置虚拟机内存布局的代码不再奏效
-	 * 需要通过设置java层的 vm 参数来解决，该方法兼容性更好
+	 * After setting a higher target SDK version, setting VM memory layout no longer works.
+	 * Need to fix by setting VM parameters at the Java layer, which has better compatibility.
 	 *
-	 * @return 是否成功
+	 * @return whether successful
 	 */
-	private static boolean fixBySetVmRuntime(Context context) {
-		// 直接获取可能获取不到
-		VmRuntimeReflectBundle vmRuntimeReflectBundle = getVmRuntimeReflectObjDirect();
+	private static boolean compat0(Context context) {
+		// Direct access may fail
+		VmRuntimeReflectBundle vmRuntimeReflectBundle = getVmRuntimeReflectObj();
 
-		// 尝试从Jni层获取
+		// Try to get from JNI layer
 		if (vmRuntimeReflectBundle == null) {
-			i("try to get reflect bundle from jni");
-			vmRuntimeReflectBundle = getVmRuntimeReflectObjNative(context);
+			i("Trying to get reflect bundle from JNI");
+			vmRuntimeReflectBundle = getVmRuntimeReflectObjCompat(context);
 		}
 
 		if (vmRuntimeReflectBundle == null) {
-			i("get reflect failed");
+			i("Failed to get reflect bundle");
 			return false;
 		}
 
 		Method getRuntimeMethod = vmRuntimeReflectBundle.getGetRuntimeMethod();
 		Method setHiddenApiExemptions = vmRuntimeReflectBundle.getSetHiddenApiExemptionsMethod();
 		if (getRuntimeMethod == null || setHiddenApiExemptions == null) {
-			i("fixBySetVmRuntime method null");
+			i("fixBySetVmRuntime methods are null");
 			return false;
 		}
 
@@ -77,9 +77,9 @@ public class HiddenApiCompat {
 		}
 	}
 
-	private static VmRuntimeReflectBundle getVmRuntimeReflectObjNative(Context context) {
-		if (!loadIfSo(context)) {
-			i("load so failed");
+	private static VmRuntimeReflectBundle getVmRuntimeReflectObjCompat(Context context) {
+		if (!loadLibrary(context)) {
+			i("Failed to load native library");
 			return null;
 		}
 
@@ -92,9 +92,9 @@ public class HiddenApiCompat {
 	}
 
 	@Nullable
-	private static VmRuntimeReflectBundle getVmRuntimeReflectObjDirect() {
+	private static VmRuntimeReflectBundle getVmRuntimeReflectObj() {
 		try {
-			// 通过系统类去load hide api可以绕过检查
+			// Loading hidden API via system classes can bypass checks
 			Method methodForName = Class.class.getDeclaredMethod("forName", String.class);
 			Method methodGetDeclaredMethod = Class.class.getDeclaredMethod("getDeclaredMethod", String.class, Class[].class);
 
@@ -109,10 +109,10 @@ public class HiddenApiCompat {
 	}
 
 	/**
-	 * @param rtnClazz 为了在jni层能够查找到我们需要的class，因为实现问题，jni的class loader找不到我们的自定义类
-	 * @param vmClazz  为了规避方法查找异常，在jni层找的话还是会触发，所以需要从java层传下去
-	 * @param <T>      return 类型
-	 * @return return对象，需要满足的结构就是，必须有一个 (Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;)V 的构造函数，并且是公共的
+	 * @param rtnClazz To find the required class in JNI layer, because JNI class loader cannot find our custom class
+	 * @param vmClazz  To avoid method lookup exceptions, pass from Java layer
+	 * @param <T>      return type
+	 * @return return object, must have a public constructor with signature (Ljava/lang/reflect/Method;Ljava/lang/reflect/Method;)V
 	 */
 	private static native <T> T getVmRuntimeReflectObjNative(Class<T> rtnClazz, Class<?> vmClazz);
 

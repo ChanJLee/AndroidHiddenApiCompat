@@ -12,8 +12,6 @@ public class VmRuntimeReflectBundle {
 	private final Method mGetRuntimeMethod;
 	private final Method mSetHiddenApiExemptionsMethod;
 
-	// jni 协议要求有这个构造函数
-	// 就不keep了，保持代码的私密
 	public VmRuntimeReflectBundle(Method getRuntimeMethod, Method setHiddenApiExemptionsMethod) {
 		mGetRuntimeMethod = getRuntimeMethod;
 		mSetHiddenApiExemptionsMethod = setHiddenApiExemptionsMethod;

@@ -25,24 +25,24 @@ public class LibraryLoader {
 	private String mModuleName;
 
 	/**
-	 * @param moduleName 需要加载的模块名，必须唯一
-	 * @param libs       需要加载的库
+	 * @param moduleName The name of the module to load, must be unique
+	 * @param libs       The libraries to load
 	 */
 	public LibraryLoader(String moduleName, String[] libs) {
 		mLibraries = new LinkedList<>(Arrays.asList(libs));
 		mModuleName = moduleName;
-		i("abi: " + Build.CPU_ABI);
+		i("ABI: " + Build.CPU_ABI);
 	}
 
 	public synchronized boolean load(Context context) {
 		if (mLibraries == null || mLibraries.isEmpty()) {
-			i("library has loaded, return true");
+			i("Libraries have already been loaded, returning true");
 			return true;
 		}
 
 		boolean result = true;
 		String workaroundLibDir = getWorkaroundLibDirName(context);
-		i("workaround dir: " + workaroundLibDir);
+		i("Workaround directory: " + workaroundLibDir);
 
 		Iterator<String> iterator = mLibraries.iterator();
 		while (iterator.hasNext()) {
@@ -53,10 +53,10 @@ public class LibraryLoader {
 
 			if (!loadLib(context, workaroundLibDir, lib)) {
 				result = false;
-				w("load " + lib + " failed");
+				w("Failed to load " + lib);
+			} else {
+				i("Successfully loaded " + lib);
 			}
-
-			i("load " + lib + " success");
 			iterator.remove();
 		}
 		return result;
@@ -80,15 +80,15 @@ public class LibraryLoader {
 
 	private boolean loadLib(Context context, String workaroundLibDir, String library) {
 		try {
-			i("load lib by System.loadLibrary");
+			i("Loading library using System.loadLibrary");
 			System.loadLibrary(library);
 			return true;
 		} catch (UnsatisfiedLinkError e) {
-			w("load lib by System.loadLibrary failed", e);
+			w("Failed to load library using System.loadLibrary", e);
 			e.printStackTrace();
 		}
 
-		i("load lib by compat");
+		i("Loading library using compatibility method");
 		return loadLibCompact(context, workaroundLibDir, library);
 	}
 
@@ -106,16 +106,16 @@ public class LibraryLoader {
 	 * Native library directory in an updated package is a symbolic link
 	 * to a directory in /data/app-lib/<package name>, for example:
 	 * /data/data/com.android.chrome/lib -> /data/app-lib/com.android.chrome[-1].
-	 * When updating the application, the PackageManager create a new directory,
-	 * e.g., /data/app-lib/com.android.chrome-2, and remove the old symlink and
-	 * recreate one to the new directory. However, on some devices (e.g. Sony Xperia),
+	 * When updating the application, the PackageManager creates a new directory,
+	 * e.g., /data/app-lib/com.android.chrome-2, and removes the old symlink and
+	 * recreates one to the new directory. However, on some devices (e.g. Sony Xperia),
 	 * the symlink was updated, but fails to extract new native libraries from
 	 * the new apk.
 	 * We make the following changes to alleviate the issue:
 	 * 1) name the native library with apk version code, e.g.,
 	 * libchrome.1750.136.so, 1750.136 is Chrome version number;
 	 * 2) first try to load the library using System.loadLibrary,
-	 * if that failed due to the library file was not found,
+	 * if that failed due to the library file not found,
 	 * search the named library in a /data/data/com.android.chrome/app_lib
 	 * directory. Because of change 1), each version has a different native
 	 * library name, so avoid mistakenly using the old native library.
@@ -159,13 +159,13 @@ public class LibraryLoader {
 				String jniNameInApk = getJniNameInApk(libName);
 				final ZipEntry entry = file.getEntry(jniNameInApk);
 				if (entry == null) {
-					e(appInfo.sourceDir + " doesn't have file " + jniNameInApk);
+					e(appInfo.sourceDir + " doesn't contain file " + jniNameInApk);
 					file.close();
 					deleteDirectorySync(libDir);
 					return false;
 				}
 				File outputFile = getWorkaroundLibFile(context, workaroundLibDir, libName);
-				i("Extracting native libraries into " + outputFile.getAbsolutePath());
+				i("Extracting native library to " + outputFile.getAbsolutePath());
 				assert !outputFile.exists();
 				try {
 					if (!outputFile.createNewFile()) {
@@ -231,7 +231,7 @@ public class LibraryLoader {
 				w("Failed to remove " + dir.getAbsolutePath());
 			}
 		} catch (Exception e) {
-			e("Failed to remove old libs, ", e);
+			e("Failed to remove old libraries", e);
 		}
 	}
 

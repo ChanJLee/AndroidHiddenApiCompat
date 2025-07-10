@@ -2,10 +2,7 @@ package me.chan.lib.hiddenapi;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.os.Build;
@@ -14,7 +11,6 @@ import android.util.Log;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
-import java.security.MessageDigest;
 
 /**
  * Created by chan on 2017/11/8.
@@ -25,12 +21,6 @@ public class MiscUtils {
 
 	private static String sProcessName;
 
-	@Deprecated
-	@Nullable
-	public static String getProcessName(@NonNull Context context) {
-		return getProcessName();
-	}
-
 	@Nullable
 	public static String getProcessName() {
 		if (!TextUtils.isEmpty(sProcessName)) {
@@ -39,7 +29,7 @@ public class MiscUtils {
 
 		sProcessName = getProcessNameInternal();
 		if (TextUtils.isEmpty(sProcessName)) {
-			w("get process name failed, return empty process name");
+			w("Failed to get process name, returning empty string");
 			return "";
 		}
 
@@ -88,18 +78,9 @@ public class MiscUtils {
 				processName = (String) processInvoke;
 			}
 		} catch (Throwable e) {
-			//ignore
+			// ignore
 		}
 		return processName;
-	}
-
-	public static boolean isDebug(Context context) {
-		try {
-			ApplicationInfo info = context.getApplicationInfo();
-			return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
-		} catch (Exception e) {
-			return false;
-		}
 	}
 
 	@Nullable
@@ -114,7 +95,7 @@ public class MiscUtils {
 			}
 
 			for (int i = 0; i < len; i++) {
-				// lots of '0' in tail, remove them
+				// Remove trailing zeros
 				if ((((int) buffer[i]) & 0xFF) > 128 || buffer[i] <= 0) {
 					len = i;
 					break;
@@ -133,32 +114,6 @@ public class MiscUtils {
 			}
 		}
 		return null;
-	}
-
-	public static String getMD5(String input) {
-		if (TextUtils.isEmpty(input)) {
-			return null;
-		}
-
-		try {
-			MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-			messageDigest.reset();
-			messageDigest.update(input.getBytes());
-			byte[] digest = messageDigest.digest();
-			StringBuilder hexString = new StringBuilder();
-			for (byte bit : digest) {
-				String hex = Integer.toHexString(0xff & bit);
-				if (hex.length() == 1) {
-					hexString.append('0');
-				}
-				hexString.append(hex);
-			}
-
-			return hexString.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	private static void w(String msg) {
