@@ -64,7 +64,7 @@ public class LibraryLoader {
 
 	private String getWorkaroundLibDirName(Context context) {
 		String pkg = context.getPackageName();
-		String processName = MiscUtils.getProcessName(context);
+		String processName = MiscUtils.getProcessName();
 		String workaroundLibDir = "lld_v1_" + mModuleName;
 		if (TextUtils.equals(pkg, processName)) {
 			return workaroundLibDir;
