@@ -26,7 +26,7 @@ Add dependency in your app's build.gradle:
 
 ```groovy
 dependencies {
-    implementation 'io.github.chanjlee:hiddenapi:1.0.0'
+    implementation 'io.github.chanjlee:hiddenapi:1.1.0'
 }
 ```
 
