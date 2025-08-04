@@ -2,8 +2,8 @@
 // Created by chan on 2019/4/19.
 //
 
-#ifndef SHANBAY_LIB_HIDE_API_HIDE_API_H
-#define SHANBAY_LIB_HIDE_API_HIDE_API_H
+#ifndef ME_CHAN_LIB_HIDE_API_HIDE_API_H
+#define ME_CHAN_LIB_HIDE_API_HIDE_API_H
 
 #include <android/log.h>
 #include <jni.h>
@@ -51,4 +51,4 @@ Java_me_chan_lib_hiddenapi_HiddenApiCompat_getVmRuntimeReflectObjNative(JNIEnv *
 }
 #endif
 
-#endif //SHANBAY_LIB_HIDE_API_HIDE_API_H
+#endif //ME_CHAN_LIB_HIDE_API_HIDE_API_H

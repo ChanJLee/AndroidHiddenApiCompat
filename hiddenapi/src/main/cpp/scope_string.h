@@ -2,8 +2,8 @@
 // Created by chan on 2019/4/22.
 //
 
-#ifndef SHANBAY_LIB_HIDE_API_SCOPE_STRING_H
-#define SHANBAY_LIB_HIDE_API_SCOPE_STRING_H
+#ifndef ME_CHAN_LIB_HIDE_API_SCOPE_STRING_H
+#define ME_CHAN_LIB_HIDE_API_SCOPE_STRING_H
 
 #include <jni.h>
 
@@ -36,4 +36,4 @@ public:
 };
 
 
-#endif //SHANBAY_LIB_HIDE_API_SCOPE_STRING_H
+#endif //ME_CHAN_LIB_HIDE_API_SCOPE_STRING_H
