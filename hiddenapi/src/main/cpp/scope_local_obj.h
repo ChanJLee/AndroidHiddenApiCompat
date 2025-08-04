@@ -2,8 +2,8 @@
 // Created by chan on 2019/4/22.
 //
 
-#ifndef SHANBAY_LIB_HIDE_API_SCOPE_LOCAL_OBJ_H
-#define SHANBAY_LIB_HIDE_API_SCOPE_LOCAL_OBJ_H
+#ifndef ME_CHAN_LIB_HIDE_API_SCOPE_LOCAL_OBJ_H
+#define ME_CHAN_LIB_HIDE_API_SCOPE_LOCAL_OBJ_H
 
 #include <jni.h>
 
@@ -24,4 +24,4 @@ public:
     }
 };
 
-#endif //SHANBAY_LIB_HIDE_API_SCOPE_LOCAL_OBJ_H
+#endif //ME_CHAN_LIB_HIDE_API_SCOPE_LOCAL_OBJ_H
